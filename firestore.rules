@@ -1,0 +1,64 @@
+rules_version = '2';
+
+// قواعد الأمان للعبة رحلة المدربة
+// - اللاعب يقرأ حسابه فقط، وما يكدر يزيد كويناته
+// - الشراء مسموح فقط بالسعر الصحيح ومن الرصيد الموجود
+// - المدير وحده يشحن الكوينات ويشوف سجل الشحن
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return request.auth != null && request.auth.uid == 'TPLgIUuvpmg97hFor8yTF1w149Y2';
+    }
+
+    // أسعار الأغراض بالكوين (لازم تطابق ملف data.js)
+    function prices() {
+      return {
+        'outfit_desert': 150,
+        'outfit_royal': 200,
+        'outfit_ninja': 250,
+        'outfit_spring': 300,
+        'skin_ice': 300,
+        'skin_shadow': 400,
+        'skin_gold': 500
+      };
+    }
+
+    function validBuy() {
+      let before = resource.data;
+      let after = request.resource.data;
+      let item = after.lastBuy;
+      let price = prices().get(item, 0);
+      return after.diff(before).affectedKeys().hasOnly(['coins', 'owned', 'lastBuy'])
+        && price > 0
+        && !(item in before.owned)
+        && after.owned == before.owned.concat([item])
+        && after.coins == before.coins - price
+        && after.coins >= 0;
+    }
+
+    match /pids/{pid} {
+      allow read: if isAdmin();
+      allow create: if request.auth != null
+        && pid.matches('^[0-9]{8}$')
+        && request.resource.data.keys().hasOnly(['uid'])
+        && request.resource.data.uid == request.auth.uid
+        && getAfter(/databases/$(database)/documents/players/$(request.auth.uid)).data.pid == pid;
+    }
+
+    match /players/{uid} {
+      allow read: if request.auth != null && (request.auth.uid == uid || isAdmin());
+      allow create: if request.auth != null && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['pid', 'coins', 'owned', 'lastBuy', 'created'])
+        && request.resource.data.coins == 0
+        && request.resource.data.owned.size() == 0
+        && getAfter(/databases/$(database)/documents/pids/$(request.resource.data.pid)).data.uid == uid;
+      allow update: if isAdmin()
+        || (request.auth != null && request.auth.uid == uid && validBuy());
+    }
+
+    match /topups/{id} {
+      allow read, create: if isAdmin();
+    }
+  }
+}

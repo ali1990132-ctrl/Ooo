@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>رحلة المدربة</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- الشاشة الرئيسية -->
+  <section id="title" class="screen active">
+    <div class="bg" id="titleBg"></div>
+    <div class="wallet" id="wallet">
+      <span class="w-coin">🪙 <b id="wCoins">—</b></span>
+      <span class="w-star">⭐ <b id="wStars">0</b></span>
+    </div>
+    <div class="title-wrap">
+      <h1 class="logo" id="logo">رحلة<br><span>المدربة</span></h1>
+      <div class="title-chars">
+        <div class="tc-shahd" id="titleShahd"></div>
+        <div class="tc-sharara bob" id="titleSharara"></div>
+      </div>
+      <div class="menu">
+        <button class="btn primary" id="btnNew">مغامرة جديدة</button>
+        <button class="btn" id="btnContinue">متابعة</button>
+        <div class="row2">
+          <button class="btn shop" id="btnShop">🛍️ المتجر</button>
+          <button class="btn" id="btnProfile">👤 حسابي</button>
+        </div>
+        <button class="btn" id="btnEpisodes">الحلقات</button>
+        <button class="btn online" id="btnOnline">اللعب أونلاين ⚡</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- قائمة الحلقات -->
+  <section id="episodes" class="screen">
+    <div class="bg" id="epBg"></div>
+    <div class="panel">
+      <h2>الحلقات</h2>
+      <div id="epList"></div>
+      <button class="btn" data-back>رجوع</button>
+    </div>
+  </section>
+
+  <!-- اللعب أونلاين -->
+  <section id="online" class="screen">
+    <div class="bg" id="onBg"></div>
+    <div class="panel">
+      <h2>اللعب أونلاين</h2>
+      <p id="onlineMsg"></p>
+      <button class="btn" data-back>رجوع</button>
+    </div>
+  </section>
+
+  <!-- المتجر -->
+  <section id="shop" class="screen">
+    <div class="bg" id="shopBg"></div>
+    <div class="page">
+      <div class="page-head">
+        <button class="back" data-back>→</button>
+        <h2>المتجر</h2>
+        <div class="mini-wallet">🪙 <b class="mwCoins">—</b> ⭐ <b class="mwStars">0</b></div>
+      </div>
+      <div class="preview">
+        <div class="pv-shahd" id="pvShahd"></div>
+        <div class="pv-sharara bob" id="pvSharara"></div>
+      </div>
+      <div class="tabs">
+        <button class="tab active" data-tab="outfit">ملابس شهد</button>
+        <button class="tab" data-tab="skin">أشكال شرارة</button>
+        <button class="tab" data-tab="chars">شخصيات</button>
+      </div>
+      <div class="grid" id="shopGrid"></div>
+    </div>
+  </section>
+
+  <!-- حسابي -->
+  <section id="profile" class="screen">
+    <div class="bg" id="profBg"></div>
+    <div class="page">
+      <div class="page-head">
+        <button class="back" data-back>→</button>
+        <h2>حسابي</h2>
+        <div></div>
+      </div>
+      <div class="card">
+        <div class="lbl">آيدي اللاعب</div>
+        <div class="pid" id="pidText">...</div>
+        <button class="btn primary" id="btnCopy">📋 نسخ الآيدي</button>
+        <div class="status" id="netStatus"></div>
+      </div>
+      <div class="card balances">
+        <div><span>🪙</span><b id="pCoins">—</b><small>كارة كوين</small></div>
+        <div><span>⭐</span><b id="pStars">0</b><small>نجوم</small></div>
+      </div>
+      <div class="card">
+        <h3>شحن كارة كوين 🪙</h3>
+        <ol class="howto">
+          <li>انسخ الآيدي من فوق.</li>
+          <li>أرسله إلى <b>كارة ستور</b> مع الباقة اللي تريدها وادفع.</li>
+          <li>توصلك الكوينات مباشرة داخل اللعبة.</li>
+        </ol>
+        <div class="packs" id="packs"></div>
+        <button class="btn online" id="btnStore">🛒 فتح كارة ستور</button>
+        <button class="btn" id="btnRefresh">🔄 تحديث الرصيد</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- لوحة الشحن (للمدير فقط) -->
+  <section id="admin" class="screen">
+    <div class="bg" id="admBg"></div>
+    <div class="page">
+      <div class="page-head">
+        <button class="back" data-back>→</button>
+        <h2>لوحة الشحن</h2>
+        <div></div>
+      </div>
+      <div class="card" id="admLogin">
+        <h3>دخول المدير</h3>
+        <input id="admEmail" type="email" placeholder="الإيميل" dir="ltr" autocomplete="username">
+        <input id="admPass" type="password" placeholder="كلمة السر" dir="ltr" autocomplete="current-password">
+        <button class="btn primary" id="admLoginBtn">دخول</button>
+        <div class="status" id="admLoginMsg"></div>
+      </div>
+      <div id="admPanel" style="display:none">
+        <div class="card">
+          <h3>شحن لاعب</h3>
+          <input id="admPid" inputmode="numeric" placeholder="آيدي اللاعب (8 أرقام)" dir="ltr">
+          <button class="btn" id="admFind">🔍 بحث</button>
+          <div class="status" id="admPlayer"></div>
+          <div class="amounts" id="admAmounts"></div>
+          <input id="admAmount" inputmode="numeric" placeholder="أو اكتب عدد الكوينات" dir="ltr">
+          <button class="btn primary" id="admSend">➕ إضافة الكوينات</button>
+          <div class="status" id="admMsg"></div>
+        </div>
+        <div class="card">
+          <h3>آخر عمليات الشحن</h3>
+          <div id="admHistory" class="history"></div>
+          <button class="btn" id="admLogout">تسجيل خروج</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- القصة -->
+  <section id="story" class="screen">
+    <div class="bg" id="storyBg"></div>
+    <div class="ep-badge" id="epBadge"></div>
+    <div class="stage">
+      <div class="actor left" id="actorL"></div>
+      <div class="actor right" id="actorR"></div>
+      <div class="actor pet" id="actorPet"></div>
+    </div>
+    <div class="dialog" id="dialog">
+      <div class="speaker" id="speaker"></div>
+      <div class="text" id="dlgText"></div>
+      <div class="choices" id="choices"></div>
+      <div class="tap">اضغط للمتابعة ◀</div>
+    </div>
+  </section>
+
+  <!-- المعركة -->
+  <section id="battle" class="screen">
+    <div class="bg" id="battleBg"></div>
+    <div class="field">
+      <div class="hud foe" id="hudFoe">
+        <div class="hud-name"><span class="nm"></span><span class="lv"></span></div>
+        <div class="type-tag"></div>
+        <div class="hpbar"><div class="hpfill"></div></div>
+      </div>
+      <div class="mon foe-mon" id="foeMon"></div>
+      <div class="shadow foe-sh"></div>
+      <div class="mon my-mon" id="myMon"></div>
+      <div class="shadow my-sh"></div>
+      <div class="hud mine" id="hudMine">
+        <div class="hud-name"><span class="nm"></span><span class="lv"></span></div>
+        <div class="type-tag"></div>
+        <div class="hpbar"><div class="hpfill"></div></div>
+        <div class="hptext"></div>
+        <div class="xpbar"><div class="xpfill"></div></div>
+      </div>
+    </div>
+    <div class="bpanel">
+      <div class="bmsg" id="bmsg"></div>
+      <div class="bmenu" id="bmenu"></div>
+    </div>
+    <div class="fx" id="fx"></div>
+  </section>
+
+  <div class="toast" id="toast"></div>
+  <div class="fade" id="fade"></div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/battle.js"></script>
+<script src="js/art.js"></script>
+<script src="js/story.js"></script>
+<script src="js/online.js"></script>
+<script src="js/meta.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
