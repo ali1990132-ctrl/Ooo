@@ -1,0 +1,45 @@
+name: Fetch 3D assets
+on:
+  push:
+    branches: [ fetch-assets ]
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fetch-assets
+      - name: Download
+        run: |
+          set -x
+          mkdir -p raw/three raw/models raw/kenney
+          V=0.160.0
+          B=https://cdn.jsdelivr.net/npm/three@$V
+          curl -fsSL $B/build/three.module.min.js -o raw/three/three.module.min.js
+          curl -fsSL $B/examples/jsm/loaders/GLTFLoader.js -o raw/three/GLTFLoader.js
+          curl -fsSL $B/examples/jsm/utils/BufferGeometryUtils.js -o raw/three/BufferGeometryUtils.js
+          curl -fsSL $B/examples/jsm/utils/SkeletonUtils.js -o raw/three/SkeletonUtils.js
+          curl -fsSL https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/Fox/glTF-Binary/Fox.glb -o raw/models/Fox.glb || true
+          curl -fsSL https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/Fox/README.md -o raw/models/Fox-README.md || true
+          curl -fsSL $B/examples/models/gltf/RobotExpressive/RobotExpressive.glb -o raw/models/RobotExpressive.glb || true
+          for a in mini-characters-1 cube-pets nature-kit mini-arena animated-characters-2 animal-pack-redux; do
+            url=$(curl -fsSL https://kenney.nl/assets/$a | grep -oE 'https://kenney.nl/media/pages/assets/[^"]+\.zip' | head -1)
+            echo "$a -> $url"
+            if [ -n "$url" ]; then
+              curl -fsSL "$url" -o /tmp/$a.zip && mkdir -p raw/kenney/$a && unzip -q /tmp/$a.zip -d /tmp/k_$a && \
+              (cd /tmp/k_$a && find . -iname "*.glb" -o -iname "*.gltf" -o -iname "*.png" -o -iname "License*" -o -iname "*.txt" | head -400 | xargs -I{} cp --parents {} $GITHUB_WORKSPACE/raw/kenney/$a/) || true
+            fi
+          done
+          find raw -type f | sed 's/^/  /' > raw/MANIFEST.txt
+          du -sh raw raw/* raw/kenney/* >> raw/MANIFEST.txt
+          cat raw/MANIFEST.txt | tail -80
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b assets-raw
+          git add raw
+          git commit -m "raw 3D assets"
+          git push -f origin assets-raw
