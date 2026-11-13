@@ -13,33 +13,52 @@ jobs:
           ref: fetch-assets
       - name: Download
         run: |
-          set -x
-          mkdir -p raw/three raw/models raw/kenney
-          V=0.160.0
-          B=https://cdn.jsdelivr.net/npm/three@$V
-          curl -fsSL $B/build/three.module.min.js -o raw/three/three.module.min.js
-          curl -fsSL $B/examples/jsm/loaders/GLTFLoader.js -o raw/three/GLTFLoader.js
-          curl -fsSL $B/examples/jsm/utils/BufferGeometryUtils.js -o raw/three/BufferGeometryUtils.js
-          curl -fsSL $B/examples/jsm/utils/SkeletonUtils.js -o raw/three/SkeletonUtils.js
-          curl -fsSL https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/Fox/glTF-Binary/Fox.glb -o raw/models/Fox.glb || true
-          curl -fsSL https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/Fox/README.md -o raw/models/Fox-README.md || true
-          curl -fsSL $B/examples/models/gltf/RobotExpressive/RobotExpressive.glb -o raw/models/RobotExpressive.glb || true
-          for a in mini-characters-1 cube-pets nature-kit mini-arena animated-characters-2 animal-pack-redux; do
-            url=$(curl -fsSL https://kenney.nl/assets/$a | grep -oE 'https://kenney.nl/media/pages/assets/[^"]+\.zip' | head -1)
-            echo "$a -> $url"
-            if [ -n "$url" ]; then
-              curl -fsSL "$url" -o /tmp/$a.zip && mkdir -p raw/kenney/$a && unzip -q /tmp/$a.zip -d /tmp/k_$a && \
-              (cd /tmp/k_$a && find . -iname "*.glb" -o -iname "*.gltf" -o -iname "*.png" -o -iname "License*" -o -iname "*.txt" | head -400 | xargs -I{} cp --parents {} $GITHUB_WORKSPACE/raw/kenney/$a/) || true
+          UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
+          mkdir -p raw/three raw/models raw/packs
+          V=0.160.0; B=https://cdn.jsdelivr.net/npm/three@$V
+          for f in build/three.module.min.js examples/jsm/loaders/GLTFLoader.js examples/jsm/utils/BufferGeometryUtils.js examples/jsm/utils/SkeletonUtils.js; do
+            curl -fsSL $B/$f -o raw/three/$(basename $f) || echo "FAIL $f"; done
+          curl -fsSL https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/Fox/glTF-Binary/Fox.glb -o raw/models/Fox.glb || echo FAIL fox
+          curl -fsSL https://raw.githubusercontent.com/mrdoob/three.js/r160/examples/models/gltf/RobotExpressive/RobotExpressive.glb -o raw/models/RobotExpressive.glb || echo FAIL robot
+          get_oga() {
+            slug=$1
+            page=$(curl -fsSL -A "$UA" https://opengameart.org/content/$slug) || { echo "FAIL page $slug"; return; }
+            echo "$page" | grep -oE 'https://opengameart.org/sites/default/files/[^"]+\.(zip|glb|gltf|7z)' | sort -u > /tmp/links_$slug.txt
+            echo "== $slug"; cat /tmp/links_$slug.txt
+            mkdir -p raw/packs/$slug
+            while read -r u; do
+              fn=$(basename "$u"); fn=${fn//%20/_}
+              curl -fsSL -A "$UA" "$u" -o "/tmp/$fn" || { echo "FAIL $u"; continue; }
+              case "$fn" in
+                *.zip) mkdir -p /tmp/x_$slug && unzip -qo "/tmp/$fn" -d /tmp/x_$slug ;;
+                *) cp "/tmp/$fn" raw/packs/$slug/ ;;
+              esac
+            done < /tmp/links_$slug.txt
+            if [ -d /tmp/x_$slug ]; then
+              (cd /tmp/x_$slug && find . -type f \( -iname "*.glb" -o -iname "*.gltf" -o -iname "*.bin" -o -iname "*.fbx" -o -iname "*.png" -o -iname "*.jpg" -o -iname "*licen*" \) -size -6M -print0 | xargs -0 -I{} cp --parents "{}" "$GITHUB_WORKSPACE/raw/packs/$slug/") || true
+              (cd /tmp/x_$slug && find . -type f | head -200) > raw/packs/$slug/_ALL_FILES.txt
             fi
+          }
+          for s in animated-characters-pack lowpoly-animated-farm-animal-pack animated-animales-low-poly textured-cute-monster-pack lowpoly-rpg-characters stylized-nature-megakit low-poly-nature-pack; do get_oga $s; done
+          for a in mini-characters-1 cube-pets; do
+            url=$(curl -fsSL -A "$UA" https://kenney.nl/assets/$a | grep -oE 'https://kenney.nl/media/pages/assets/[^"]+\.zip' | head -1)
+            echo "kenney $a -> $url"
+            if [ -n "$url" ]; then mkdir -p /tmp/k_$a raw/packs/kenney-$a; curl -fsSL -A "$UA" "$url" -o /tmp/$a.zip && unzip -qo /tmp/$a.zip -d /tmp/k_$a && \
+              (cd /tmp/k_$a && find . -type f \( -iname "*.glb" -o -iname "*.png" -o -iname "Licen*" \) -size -3M -print0 | xargs -0 -I{} cp --parents "{}" "$GITHUB_WORKSPACE/raw/packs/kenney-$a/"); fi
           done
-          find raw -type f | sed 's/^/  /' > raw/MANIFEST.txt
-          du -sh raw raw/* raw/kenney/* >> raw/MANIFEST.txt
-          cat raw/MANIFEST.txt | tail -80
+          curl -fsSL -L https://github.com/facebookincubator/FBX2glTF/releases/download/v0.9.7/FBX2glTF-linux-x64 -o /tmp/fbx2gltf && chmod +x /tmp/fbx2gltf && echo "FBX2glTF ok" || echo "FAIL fbx2gltf"
+          # convert fbx to glb
+          find raw/packs -iname "*.fbx" | while read -r f; do
+            out="${f%.*}"; /tmp/fbx2gltf -b -i "$f" -o "$out" >/dev/null 2>&1 && rm "$f" || echo "convfail $f"
+          done
+          find raw -type f -printf "%s\t%p\n" | sort -k2 > raw/MANIFEST.txt
+          du -sh raw/packs/* raw/models raw/three >> raw/MANIFEST.txt
+          tail -40 raw/MANIFEST.txt
       - name: Commit
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -b assets-raw
           git add raw
-          git commit -m "raw 3D assets"
+          git commit -qm "raw 3D assets"
           git push -f origin assets-raw
