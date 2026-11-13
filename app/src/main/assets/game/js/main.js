@@ -42,6 +42,7 @@
       function swap() {
         document.querySelectorAll('.screen').forEach(function (s) { s.classList.toggle('active', s.id === id); });
         current = id;
+        onScreen(id);
       }
       if (instant) { swap(); return res(); }
       f.classList.add('on');
@@ -54,6 +55,27 @@
     if (name === 'mazen') return Art.mazen();
     if (name === 'salma') return Art.salma();
     return Art.creature(name, false, name === 'sharara' ? Meta.look('skin') : null);
+  }
+
+  // ===== الرسومات ثلاثية الأبعاد =====
+  var has3D = false;
+  function on3DReady() {
+    window.Scene3D.ready.then(function () {
+      has3D = true;
+      document.getElementById('app').classList.add('has3d');
+      onScreen(current);
+    }).catch(function () { has3D = false; });
+  }
+  if (window.Scene3D) on3DReady(); else window.addEventListener('scene3d', on3DReady);
+
+  function onScreen(id) {
+    if (!has3D) return;
+    var S = window.Scene3D;
+    try {
+      if (id === 'title') S.Showcase.show($('title3d'), { outfit: Meta.look('outfit'), skin: Meta.look('skin'), dist: 2.8, camY: 0.95 });
+      else if (id === 'shop') S.Showcase.show($('shop3d'), { outfit: Meta.look('outfit'), skin: Meta.look('skin'), dist: 3.0, camY: 0.95 });
+      else if (id !== 'battle') { S.Showcase.stop(); }
+    } catch (e) {}
   }
 
   // ===== الشاشة الرئيسية =====
@@ -254,8 +276,12 @@
       wild: c.wild
     });
     $('battleBg').innerHTML = Art.bg(c.bg || 'forest');
-    renderMon(0, true); renderMon(1, true);
     show('battle').then(function () {
+      if (has3D) return window.Scene3D.Battle.start($('battle3d'), c.bg || 'forest')
+        .then(function () { return Promise.all([renderMon(1, true), renderMon(0, true)]); })
+        .catch(function () {});
+      renderMon(0, true); renderMon(1, true);
+    }).then(function () {
       var intro = c.wild ? 'ظهر ' + foeTeam[0].name + ' البري!' : c.foe + ' يريد المعركة!';
       msg(intro).then(function () { return wait(1100); })
         .then(function () { return msg(c.wild ? '' : c.foe + ' أرسل ' + foeTeam[0].name + '!'); })
@@ -271,11 +297,16 @@
 
   function renderMon(side, enter) {
     var mon = Battle.active(B.sides[side]);
+    if (has3D) {
+      updateHud(side, true);
+      return window.Scene3D.Battle.setMon(side, mon.species, mon.species === 'sharara' ? Meta.look('skin') : null, enter);
+    }
     var el = side === 0 ? $('myMon') : $('foeMon');
     el.className = 'mon ' + (side === 0 ? 'my-mon' : 'foe-mon') + (enter ? ' enter' : '');
     el.innerHTML = Art.creature(mon.species, false, mon.species === 'sharara' ? Meta.look('skin') : null);
     if (side === 0) el.firstChild.style.transform = 'scaleX(-1)';
     updateHud(side, true);
+    return Promise.resolve();
   }
 
   function updateHud(side, instant) {
@@ -405,6 +436,27 @@
 
   function playOne(e) {
     var el = function (side) { return side === 0 ? $('myMon') : $('foeMon'); };
+    if (has3D) {
+      var S3 = window.Scene3D.Battle;
+      switch (e.t) {
+        case 'attack':
+          msg(e.msg);
+          if (e.mtype === 'electric') sfx.zap(); else sfx.tap();
+          return S3.attack(e.side, e.mtype).then(function () { return wait(200); });
+        case 'damage':
+          sfx.hit(); updateHud(e.side); S3.hit(e.side);
+          return wait(600);
+        case 'heal':
+          msg(e.msg); sfx.heal(); updateHud(e.side); S3.heal(e.side);
+          return wait(1200);
+        case 'faint':
+          msg(e.msg); sfx.faint();
+          return S3.faint(e.side).then(function () { return wait(500); });
+        case 'switch':
+          msg(e.msg);
+          return renderMon(e.side, true).then(function () { return wait(500); });
+      }
+    }
     switch (e.t) {
       case 'attack':
         msg(e.msg);
@@ -452,7 +504,7 @@
   function endBattle() {
     var won = B.winner === 0, ran = B.winner === -1;
     var text = won ? (cfg.wild ? 'انتصرتِ في المعركة! 🎉' : 'فزتِ على ' + cfg.foe + '! 🎉') : ran ? 'هربتِ من المعركة.' : 'خسرتِ المعركة...';
-    if (won) sfx.win();
+    if (won) { sfx.win(); if (has3D) window.Scene3D.Battle.cheer(0); }
     msg(text);
     menu([]);
     wait(1800).then(function () {
@@ -483,7 +535,7 @@
     return 'ok';
   };
 
-  window.Game = { show: show, sfx: sfx, goTitle: goTitle, current: function () { return current; } };
+  window.Game = { show: show, sfx: sfx, goTitle: goTitle, current: function () { return current; }, has3D: function () { return has3D; } };
   initTitle();
   Meta.init();
 })();

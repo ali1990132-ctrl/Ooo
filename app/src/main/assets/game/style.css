@@ -160,3 +160,15 @@ input { width: 100%; padding: 13px; font: inherit; font-size: 18px; border: 3px 
   text-align: center; font-size: 17px; z-index: 60; transform: translateY(-140%); transition: transform .35s; border: 3px solid #14532d; }
 .toast.show { transform: translateY(0); }
 .toast.err { background: #dc2626; border-color: #7f1d1d; }
+
+/* 3D */
+.gl-host { position: absolute; inset: 0; overflow: hidden; display: none; }
+.has3d .gl-host { display: block; }
+canvas.gl { display: block; width: 100%; height: 100%; touch-action: none; }
+.has3d .tc-shahd, .has3d .tc-sharara, .has3d .pv-shahd, .has3d .pv-sharara,
+.has3d #myMon, .has3d #foeMon, .has3d .shadow { display: none; }
+.has3d .hud { z-index: 2; }
+.has3d .title-chars { min-height: 240px; }
+.has3d .hud.foe { right: auto; left: 4%; top: 3%; }
+.has3d .hud.mine { left: auto; right: 4%; bottom: 4%; }
+.credits { text-align: center; font-size: 11px; color: #e2e8f0; opacity: .8; padding: 4px 8px 16px; line-height: 1.6; }

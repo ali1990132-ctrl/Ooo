@@ -119,6 +119,7 @@
 
   function equip(it) {
     meta.look[it.kind] = it.id; persist();
+    if (Game.has3D()) { try { Scene3D.Showcase.restyle(look('outfit'), look('skin')); } catch (e) {} }
     toast('صار ' + it.name + ' هو الشكل المستعمل ✨');
     renderShop();
   }

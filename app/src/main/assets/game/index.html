@@ -19,6 +19,7 @@
     <div class="title-wrap">
       <h1 class="logo" id="logo">رحلة<br><span>المدربة</span></h1>
       <div class="title-chars">
+        <div class="gl-host" id="title3d"></div>
         <div class="tc-shahd" id="titleShahd"></div>
         <div class="tc-sharara bob" id="titleSharara"></div>
       </div>
@@ -65,6 +66,7 @@
         <div class="mini-wallet">🪙 <b class="mwCoins">—</b> ⭐ <b class="mwStars">0</b></div>
       </div>
       <div class="preview">
+        <div class="gl-host" id="shop3d"></div>
         <div class="pv-shahd" id="pvShahd"></div>
         <div class="pv-sharara bob" id="pvSharara"></div>
       </div>
@@ -107,6 +109,7 @@
         <button class="btn online" id="btnStore">🛒 فتح كارة ستور</button>
         <button class="btn" id="btnRefresh">🔄 تحديث الرصيد</button>
       </div>
+      <div class="credits">رسومات 3D: Quaternius (CC0) — الثعلب: PixelMannen وtomkranis (CC-BY 4.0) — مكتبة Three.js</div>
     </div>
   </section>
 
@@ -167,6 +170,7 @@
   <section id="battle" class="screen">
     <div class="bg" id="battleBg"></div>
     <div class="field">
+      <div class="gl-host" id="battle3d"></div>
       <div class="hud foe" id="hudFoe">
         <div class="hud-name"><span class="nm"></span><span class="lv"></span></div>
         <div class="type-tag"></div>
@@ -195,6 +199,8 @@
   <div class="fade" id="fade"></div>
 </div>
 
+<script type="importmap">{ "imports": { "three": "./lib/three.module.min.js" } }</script>
+<script type="module" src="js/scene3d.js"></script>
 <script src="js/data.js"></script>
 <script src="js/battle.js"></script>
 <script src="js/art.js"></script>
