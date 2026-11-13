@@ -1,0 +1,60 @@
+./RPG Characters - Nov 2020/FBX/Rogue.fbx
+./RPG Characters - Nov 2020/FBX/Cleric.fbx
+./RPG Characters - Nov 2020/FBX/Warrior.fbx
+./RPG Characters - Nov 2020/FBX/Ranger.fbx
+./RPG Characters - Nov 2020/FBX/Monk.fbx
+./RPG Characters - Nov 2020/FBX/Only Weapons/Ranger_Bow.fbx
+./RPG Characters - Nov 2020/FBX/Only Weapons/Ranger_Arrow.fbx
+./RPG Characters - Nov 2020/FBX/Only Weapons/Cleric_Staff.fbx
+./RPG Characters - Nov 2020/FBX/Only Weapons/Rogue_Dagger.fbx
+./RPG Characters - Nov 2020/FBX/Only Weapons/Warrior_Sword.fbx
+./RPG Characters - Nov 2020/FBX/Only Weapons/Wizard_Staff.fbx
+./RPG Characters - Nov 2020/FBX/Wizard.fbx
+./RPG Characters - Nov 2020/OBJ/Cleric.mtl
+./RPG Characters - Nov 2020/OBJ/Wizard.obj
+./RPG Characters - Nov 2020/OBJ/Ranger.mtl
+./RPG Characters - Nov 2020/OBJ/Warrior.mtl
+./RPG Characters - Nov 2020/OBJ/Rogue.obj
+./RPG Characters - Nov 2020/OBJ/Monk.mtl
+./RPG Characters - Nov 2020/OBJ/Rogue.mtl
+./RPG Characters - Nov 2020/OBJ/Ranger.obj
+./RPG Characters - Nov 2020/OBJ/Monk.obj
+./RPG Characters - Nov 2020/OBJ/Wizard.mtl
+./RPG Characters - Nov 2020/OBJ/Only Weapons/Rogue_Dagger.obj
+./RPG Characters - Nov 2020/OBJ/Only Weapons/Wizard_Staff.mtl
+./RPG Characters - Nov 2020/OBJ/Only Weapons/Rogue_Dagger.mtl
+./RPG Characters - Nov 2020/OBJ/Only Weapons/Ranger_Arrow.mtl
+./RPG Characters - Nov 2020/OBJ/Only Weapons/Cleric_Staff.obj
+./RPG Characters - Nov 2020/OBJ/Only Weapons/Warrior_Sword.obj
+./RPG Characters - Nov 2020/OBJ/Only Weapons/Wizard_Staff.obj
+./RPG Characters - Nov 2020/OBJ/Only Weapons/Ranger_Arrow.obj
+./RPG Characters - Nov 2020/OBJ/Only Weapons/Cleric_Staff.mtl
+./RPG Characters - Nov 2020/OBJ/Only Weapons/Warrior_Sword.mtl
+./RPG Characters - Nov 2020/OBJ/Only Weapons/Ranger_Bow.obj
+./RPG Characters - Nov 2020/OBJ/Only Weapons/Ranger_Bow.mtl
+./RPG Characters - Nov 2020/OBJ/Cleric.obj
+./RPG Characters - Nov 2020/OBJ/Warrior.obj
+./RPG Characters - Nov 2020/Textures/Cleric_Staff_Texture.png
+./RPG Characters - Nov 2020/Textures/Warrior_Texture.png
+./RPG Characters - Nov 2020/Textures/Monk_Texture.png
+./RPG Characters - Nov 2020/Textures/Cleric_Texture.png
+./RPG Characters - Nov 2020/Textures/Wizard_Staff_Texture.png
+./RPG Characters - Nov 2020/Textures/Ranger_Bow_Texture.png
+./RPG Characters - Nov 2020/Textures/Rogue_Texture.png
+./RPG Characters - Nov 2020/Textures/Warrior_Sword_Texture.png
+./RPG Characters - Nov 2020/Textures/Ranger_Texture.png
+./RPG Characters - Nov 2020/Textures/Rogue_Dagger_Texture.png
+./RPG Characters - Nov 2020/Textures/Wizard_Texture.png
+./RPG Characters - Nov 2020/Blends/Wizard.blend
+./RPG Characters - Nov 2020/Blends/Warrior.blend
+./RPG Characters - Nov 2020/Blends/Ranger.blend
+./RPG Characters - Nov 2020/Blends/Monk.blend
+./RPG Characters - Nov 2020/Blends/Cleric.blend
+./RPG Characters - Nov 2020/Blends/Rogue.blend
+./RPG Characters - Nov 2020/Blends/Only Weapons/Rogue_Dagger.blend
+./RPG Characters - Nov 2020/Blends/Only Weapons/Cleric_Staff.blend
+./RPG Characters - Nov 2020/Blends/Only Weapons/Ranger_Bow.blend
+./RPG Characters - Nov 2020/Blends/Only Weapons/Wizard_Staff.blend
+./RPG Characters - Nov 2020/Blends/Only Weapons/Warrior_Sword.blend
+./RPG Characters - Nov 2020/License.txt
+./RPG Characters - Nov 2020/Preview.jpg
